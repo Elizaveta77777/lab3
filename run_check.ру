@@ -1,0 +1,45 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from linear_models import train_linear_regression, train_logistic_classifier, compare_classical_models
+from grader_contracts.linear_models import RegressionInput, ClassificationInput
+
+df_reg = pd.read_csv("Student_Performance.csv")
+X_reg = df_reg.drop(columns=["Performance Index"])
+y_reg = df_reg["Performance Index"]
+
+X_train_reg, X_test_reg, y_train_reg, y_test_reg = train_test_split(X_reg, y_reg, test_size=0.2, random_state=42)
+
+reg_input = RegressionInput(
+    train_features=X_train_reg,
+    train_target=y_train_reg,
+    test_features=X_test_reg,
+    test_target=y_test_reg,
+    learning_rate=0.05,
+    epochs=800
+)
+
+print("Запускаем линейную регрессию...")
+result_reg = train_linear_regression(reg_input)
+print("Линейная регрессия завершена. Test MSE записан в JSON.")
+
+df_clf = pd.read_csv("german.csv", sep=";")
+
+X_clf = df_clf.drop(columns=df_clf.columns[0])
+y_clf = df_clf.iloc[:, 0]
+
+X_train_clf, X_test_clf, y_train_clf, y_test_clf = train_test_split(X_clf, y_clf, test_size=0.2, random_state=42)
+
+clf_input = ClassificationInput(
+    train_features=X_train_clf,
+    train_target=y_train_clf,
+    test_features=X_test_clf,
+    test_target=y_test_clf,
+    learning_rate=0.1,
+    epochs=1000
+)
+
+print("Запускаем сравнение моделей классификации...")
+result_clf = compare_classical_models(clf_input)
+print("Классификация завершена. Метрики записаны в JSON.")
+
+print("Готово! Открой файл experiment_results.json и скопируй оттуда числа в REPORT.md")
